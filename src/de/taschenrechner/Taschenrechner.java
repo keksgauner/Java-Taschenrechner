@@ -1,6 +1,9 @@
 package de.taschenrechner;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -9,11 +12,7 @@ public class Taschenrechner {
     // Start Basic
     protected String name = "Taschenrechner";
     protected JPanel rootPanel;
-    // Display
-    JPanel displayPanel;
     JTextField output;
-    // Input
-    JPanel inputPanel;
     JButton eins;
     JButton zwei;
     JButton drei;
@@ -38,6 +37,16 @@ public class Taschenrechner {
     public Taschenrechner(){
         initButtonListener();
         initKeyListener();
+
+        // Textfeld größe mit Schriftgröße anpassen
+        this.output.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                JTextField field = (JTextField) e.getComponent();
+                int size = Math.max(12, (int) (field.getWidth() * 0.1));
+                field.setFont(new Font(field.getFont().getName(), field.getFont().getStyle(), size));
+            }
+        });
     }
 
     private void initKeyListener() {
