@@ -6,40 +6,68 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import java.util.List;
 
-public class Taschenrechner {
-    // Start Basic
+class Taschenrechner {
     protected String name = "Taschenrechner";
     protected JPanel rootPanel;
-    JTextField output;
-    JButton eins;
-    JButton zwei;
-    JButton drei;
-    JButton vier;
-    JButton fuenf;
-    JButton sechs;
-    JButton sieben;
-    JButton acht;
-    JButton neun;
-    JButton nil;
-    JButton plus;
-    JButton minus;
-    JButton mal;
-    JButton geteiltdurch;
-    JButton kommer;
-    JButton istgleich;
-    JButton clear;
-
-    // Calculation
+    // Das hier wird genutzt damit aus dem Textfeld die Eingabe nicht geholt werden muss
     StringBuilder input = new StringBuilder();
+    JTextField textFieldOutput;
+    JButton button1;
+    JButton button2;
+    JButton button3;
+    JButton button4;
+    JButton button5;
+    JButton button6;
+    JButton button7;
+    JButton button8;
+    JButton button9;
+    JButton button0;
+    JButton buttonPlus;
+    JButton buttonMinus;
+    JButton buttonMultiply;
+    JButton buttonDivide;
+    JButton buttonDot;
+    JButton buttonEqual;
+    JButton buttonClear;
     
     public Taschenrechner(){
-        initButtonListener();
-        initKeyListener();
+        buttonListener();
+        keyListener();
+        textGrow();
+    }
+
+    /**
+     * Diese funktion sorgt dafür das die Schriftgröße der Buttons und des Textfeldes sich anpasst
+     */
+    void textGrow() {
+        List<JButton> list = List.of(
+                // Numbers
+                this.button1, this.button2, this.button3,
+                this.button4, this.button5, this.button6,
+                this.button7, this.button8, this.button9,
+                this.button0,
+                // Special Characters
+                this.buttonPlus, this.buttonMinus, this.buttonMultiply, this.buttonDivide,
+                // Other
+                this.buttonEqual, this.buttonClear
+        );
+
+        for(JButton button : list) {
+            button.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    JButton field = (JButton) e.getComponent();
+                    int size = Math.max(12, (int) (field.getWidth() * 0.1));
+                    field.setFont(new Font(field.getFont().getName(), field.getFont().getStyle(), size));
+                }
+            });
+        }
 
         // Textfeld größe mit Schriftgröße anpassen
-        this.output.addComponentListener(new ComponentAdapter() {
+        this.textFieldOutput.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 JTextField field = (JTextField) e.getComponent();
@@ -49,83 +77,88 @@ public class Taschenrechner {
         });
     }
 
-    private void initKeyListener() {
-        // Damit die key inputs immer gehen
-        this.output.requestFocusInWindow();
-        this.output.addKeyListener(new KeyAdapter() {
+    /**
+     * Diese Funktion sorgt dafür das die Tastatureingaben nuztbar sind
+     */
+    void keyListener() {
+        // Focus auf das Textfeld setzen
+        this.textFieldOutput.requestFocusInWindow();
+        this.textFieldOutput.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_0 -> nil.doClick();
-                    case KeyEvent.VK_1 -> eins.doClick();
-                    case KeyEvent.VK_2 -> zwei.doClick();
-                    case KeyEvent.VK_3 -> drei.doClick();
-                    case KeyEvent.VK_4 -> vier.doClick();
-                    case KeyEvent.VK_5 -> fuenf.doClick();
-                    case KeyEvent.VK_6 -> sechs.doClick();
-                    case KeyEvent.VK_7 -> sieben.doClick();
-                    case KeyEvent.VK_8 -> acht.doClick();
-                    case KeyEvent.VK_9 -> neun.doClick();
+                    case KeyEvent.VK_0 -> button0.doClick();
+                    case KeyEvent.VK_1 -> button1.doClick();
+                    case KeyEvent.VK_2 -> button2.doClick();
+                    case KeyEvent.VK_3 -> button3.doClick();
+                    case KeyEvent.VK_4 -> button4.doClick();
+                    case KeyEvent.VK_5 -> button5.doClick();
+                    case KeyEvent.VK_6 -> button6.doClick();
+                    case KeyEvent.VK_7 -> button7.doClick();
+                    case KeyEvent.VK_8 -> button8.doClick();
+                    case KeyEvent.VK_9 -> button9.doClick();
 
-                    case KeyEvent.VK_PLUS -> plus.doClick();
-                    case KeyEvent.VK_MINUS -> minus.doClick();
-                    case KeyEvent.VK_MULTIPLY -> mal.doClick();
-                    case KeyEvent.VK_SLASH -> geteiltdurch.doClick();
-                    case KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD -> kommer.doClick();
-                    case KeyEvent.VK_BACK_SPACE -> clear.doClick();
+                    case KeyEvent.VK_PLUS -> buttonPlus.doClick();
+                    case KeyEvent.VK_MINUS -> buttonMinus.doClick();
+                    case KeyEvent.VK_MULTIPLY -> buttonMultiply.doClick();
+                    case KeyEvent.VK_SLASH -> buttonDivide.doClick();
+                    case KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD -> buttonDot.doClick();
+                    case KeyEvent.VK_BACK_SPACE -> buttonClear.doClick();
 
-                    case KeyEvent.VK_ENTER -> istgleich.doClick();
+                    case KeyEvent.VK_ENTER -> buttonEqual.doClick();
                     default -> System.out.println("Ungültiger Key Eingabe: " + e.getKeyChar());
                 }
             }
         });
     }
 
-    void initButtonListener() {
+    /**
+     * Diese Funktion sorgt dafür das die Buttons funktionieren
+     */
+    void buttonListener() {
         List<JButton> buttonList = List.of(
-                // Zahlen
-                this.eins, this.zwei, this.drei, 
-                this.vier, this.fuenf, this.sechs, 
-                this.sieben, this.acht, this.neun,
-                this.nil,
-                // Sonderzeichen
-                this.plus, this.minus, this.mal, this.geteiltdurch);
+                // Numbers
+                this.button1, this.button2, this.button3,
+                this.button4, this.button5, this.button6,
+                this.button7, this.button8, this.button9,
+                this.button0,
+                // Special Characters
+                this.buttonPlus, this.buttonMinus, this.buttonMultiply, this.buttonDivide,
+                this.buttonDot);
 
         for(JButton button : buttonList) {
             button.addActionListener(e -> {
                 this.input.append(e.getActionCommand());
                 // Print Input
-                this.output.setText(this.input.toString());
-
-                // Damit die key inputs immer gehen
-                this.output.requestFocusInWindow();
+                this.setOutput(this.input.toString());
             });
         }
 
-        // Calcualtion
-        this.istgleich.addActionListener(e -> {
-            String result = String.valueOf(calculate(this.input.toString()));
+        // Calculate
+        this.buttonEqual.addActionListener(e -> {
+            double result = calculate(this.input.toString());
+            DecimalFormat formatPattern = new DecimalFormat("#.#####");
+            String formattedResult = formatPattern.format(result);
 
             // Print Result
-            this.output.setText(result);
-            this.input = new StringBuilder(result);
-
-            // Damit die key inputs immer gehen
-            this.output.requestFocusInWindow();
+            this.setOutput(formattedResult);
+            this.input = new StringBuilder(formattedResult);
         });
 
-        this.clear.addActionListener(e -> {
+        this.buttonClear.addActionListener(e -> {
             this.input = new StringBuilder();
-            this.output.setText(this.input.toString());
-
-            // Damit die key inputs immer gehen
-            this.output.requestFocusInWindow();
+            this.setOutput(this.input.toString());
         });
     }
 
-    double calculate(String inputString) {
-        String[] parts = inputString.split("[+\\-x/]");
-        String[] operators = inputString.split("[\\d.]+");
+    /**
+     * Diese Funktion sorgt dafür das die Rechnung durchgeführt wird
+     * @param input Die Eingabe die gerechnet werden soll z.B. "1+1"
+     * @return result in double
+     */
+    double calculate(String input) {
+        String[] parts = input.split("[+\\-x/]");
+        String[] operators = input.split("[\\d.]+");
 
         double result = Double.parseDouble(parts[0]);
         int operatorIndex = 1;
@@ -145,4 +178,8 @@ public class Taschenrechner {
         return result;
     }
 
+    void setOutput(String output) {
+        this.textFieldOutput.setText(output);
+        this.textFieldOutput.requestFocusInWindow();
+    }
 }
